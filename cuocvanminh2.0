@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tính cước Văn Minh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#e9edf2; --panel:#ffffff; --ink:#0f1b2d; --muted:#5d6b7e; --line:#d5dce6; --field:#f6f8fb;
+  --brand:#16408f; --brand-ink:#ffffff; --brand-soft:#e3ebfa;
+  --stamp:#b42318; --warn-bg:#fff4d6; --warn-ink:#6b4500; --info-bg:#e8f0fb; --info-ink:#183a73;
+  --receipt:#fffef9; --receipt-line:#c9c3b0;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0c121c; --panel:#141d2b; --ink:#e8edf5; --muted:#93a1b5; --line:#263349; --field:#0f1724;
+    --brand:#6f9bff; --brand-ink:#0b1426; --brand-soft:#1b2a47;
+    --stamp:#ff8a7a; --warn-bg:#3a2e10; --warn-ink:#ffd98a; --info-bg:#162641; --info-ink:#b9d0ff;
+    --receipt:#1a2434; --receipt-line:#3a4863; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0c121c; --panel:#141d2b; --ink:#e8edf5; --muted:#93a1b5; --line:#263349; --field:#0f1724;
+  --brand:#6f9bff; --brand-ink:#0b1426; --brand-soft:#1b2a47;
+  --stamp:#ff8a7a; --warn-bg:#3a2e10; --warn-ink:#ffd98a; --info-bg:#162641; --info-ink:#b9d0ff;
+  --receipt:#1a2434; --receipt-line:#3a4863; color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:15px;line-height:1.5;-webkit-text-size-adjust:100%}
+.wrap{max-width:1140px;margin:0 auto;padding:20px 16px 110px}
+header.top{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.mark{width:46px;height:46px;border-radius:10px;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-weight:700;font-size:17px;letter-spacing:-.02em;flex:none}
+h1{margin:0;font-size:22px;line-height:1.2;letter-spacing:-.01em}
+header p{margin:2px 0 0;color:var(--muted);font-size:13.5px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:22px;align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.sec{padding:18px 20px;border-top:1px solid var(--line)}
+.sec:first-child{border-top:0}
+.sec h2{margin:0 0 12px;font-size:15px;font-weight:600}
+.sec h2 small{font-weight:400;color:var(--muted);margin-left:6px}
+.row{display:grid;gap:12px}
+.row.two{grid-template-columns:1fr 1fr}
+.row.three{grid-template-columns:repeat(3,1fr)}
+.row+.row,.row+label.fld,label.fld+.row,label.fld+label.fld{margin-top:12px}
+label.fld{display:block;font-size:13px;color:var(--muted);font-weight:500}
+label.fld>span.l{display:block;margin-bottom:5px}
+select,input[type=text],input[type=number]{width:100%;font:inherit;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-height:44px;appearance:none;-webkit-appearance:none}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 19px,calc(100% - 13px) 19px;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px}
+select:disabled,input:disabled{opacity:.5}
+input[type=number]{-moz-appearance:textfield}
+.unit{position:relative}
+.unit input{padding-right:46px}
+.unit i{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-style:normal;color:var(--muted);font-size:13px;pointer-events:none}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--field)}
+.seg label{position:relative;cursor:pointer;margin:0}
+.seg input{position:absolute;opacity:0;inset:0}
+.seg span{display:block;text-align:center;padding:11px 8px;font-weight:500;font-size:14px;border-left:1px solid var(--line);min-height:44px;line-height:1.3}
+.seg label:first-child span{border-left:0}
+.seg input:checked+span{background:var(--brand);color:var(--brand-ink)}
+.seg input:focus-visible+span{outline:2px solid var(--brand);outline-offset:-4px}
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.plan{position:relative;cursor:pointer}
+.plan input{position:absolute;opacity:0;inset:0}
+.plan div{border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--field);height:100%}
+.plan b{display:block;font-size:15px}
+.plan em{font-style:normal;color:var(--muted);font-size:13px}
+.plan input:checked+div{border-color:var(--brand);background:var(--brand-soft)}
+.plan input:disabled+div{opacity:.5}
+.plan input:focus-visible+div{outline:2px solid var(--brand);outline-offset:2px}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink);cursor:pointer;margin:0}
+.chk input{width:20px;height:20px;margin:1px 0 0;flex:none;accent-color:var(--brand)}
+.chk small{display:block;color:var(--muted);font-size:12.5px}
+.swap{align-self:end;min-height:44px;width:44px;border:1px solid var(--line);background:var(--field);color:var(--ink);border-radius:8px;font-size:18px;cursor:pointer}
+.fromto{display:grid;grid-template-columns:1fr 44px 1fr;gap:10px}
+details.adv{margin-top:14px;font-size:13.5px}
+details.adv summary{cursor:pointer;color:var(--brand);font-weight:500;min-height:32px}
+.hint{font-size:12.5px;color:var(--muted);margin-top:6px}
+.sub{margin-top:12px;padding:12px;border-radius:8px;background:var(--field);border:1px dashed var(--line)}
+
+/* Biên lai */
+.side{position:sticky;top:calc(12px + env(safe-area-inset-top,0px))}
+.receipt{background:var(--receipt);border:1px solid var(--receipt-line);border-radius:4px;position:relative;padding:20px 20px 16px;box-shadow:0 1px 0 var(--receipt-line)}
+.receipt::before,.receipt::after{content:"";position:absolute;left:-1px;right:-1px;height:8px;background:radial-gradient(circle at 6px 0,var(--bg) 4px,transparent 4.5px) 0 0/12px 8px repeat-x}
+.receipt::before{top:-1px;transform:rotate(180deg)}
+.receipt::after{bottom:-1px}
+.rhead{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;color:var(--muted)}
+.route{font-weight:600;font-size:16px;margin:6px 0 2px;line-height:1.3}
+.meta{font-size:13px;color:var(--muted)}
+.dash{border:0;border-top:1.5px dashed var(--receipt-line);margin:14px 0}
+.ln{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:14px}
+.ln .t{min-width:0}
+.ln .t small{display:block;color:var(--muted);font-size:12.5px;line-height:1.35}
+.ln .a{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:500}
+.sumrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.sumrow span{font-weight:600}
+.big{font-size:34px;font-weight:700;letter-spacing:-.02em;color:var(--stamp);font-variant-numeric:tabular-nums;line-height:1.1}
+.stamp{display:inline-block;border:2px solid var(--stamp);color:var(--stamp);border-radius:6px;padding:1px 8px;font-weight:700;font-size:12px;transform:rotate(-4deg)}
+.retbox{margin-top:12px;padding:10px 12px;background:var(--info-bg);color:var(--info-ink);border-radius:8px;font-size:13.5px}
+.msg{padding:10px 12px;border-radius:8px;font-size:13.5px;margin-top:8px}
+.msg.warn{background:var(--warn-bg);color:var(--warn-ink)}
+.msg.info{background:var(--info-bg);color:var(--info-ink)}
+.empty{padding:26px 8px;text-align:center;color:var(--muted)}
+.btns{display:flex;gap:8px;margin-top:14px}
+.btn{flex:1;min-height:44px;border-radius:8px;border:1px solid var(--brand);background:var(--brand);color:var(--brand-ink);font:inherit;font-weight:600;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--brand)}
+.rules{margin-top:18px;padding:0}
+.rules summary{padding:14px 20px;font-weight:600;cursor:pointer;min-height:48px}
+.rules ul{margin:0;padding:0 20px 16px 38px;color:var(--ink);font-size:13.5px}
+.rules li{margin:5px 0}
+.bar{position:fixed;left:0;right:0;bottom:0;display:none;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:var(--panel);border-top:1px solid var(--line);z-index:10}
+.bar b{font-size:22px;color:var(--stamp);font-variant-numeric:tabular-nums}
+.bar a{color:var(--brand);font-weight:600;text-decoration:none;font-size:14px;padding:10px 4px}
+@media (max-width:900px){
+  .grid{grid-template-columns:1fr}
+  .side{position:static}
+  .bar{display:flex}
+  .wrap{padding-bottom:90px}
+}
+@media (max-width:520px){
+  .row.two,.row.three{grid-template-columns:1fr}
+  .seg{grid-template-columns:1fr}
+  .seg span{border-left:0;border-top:1px solid var(--line)}
+  .seg label:first-child span{border-top:0}
+  .fromto{grid-template-columns:1fr}
+  .swap{width:100%}
+  .plans{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="mark" aria-hidden="true">VM</div>
+    <div>
+      <h1>Tính cước chuyển phát Văn Minh</h1>
+      <p>Theo bảng cước hiệu lực 21/04/2026 · giá đã gồm VAT</p>
+    </div>
+  </header>
+
+  <div class="grid">
+    <form id="f" class="panel" autocomplete="off" onsubmit="return false">
+
+      <section class="sec">
+        <h2>Loại hàng</h2>
+        <div class="seg" role="radiogroup" aria-label="Loại hàng">
+          <label><input type="radio" name="kind" value="normal" checked><span>Hàng thông thường</span></label>
+          <label><input type="radio" name="kind" value="special"><span>Hàng đặc thù</span></label>
+          <label><input type="radio" name="kind" value="vehicle"><span>Xe máy, xe điện, xe đạp</span></label>
+        </div>
+
+        <div id="boxSp" class="sub" hidden>
+          <label class="fld"><span class="l">Nhóm hàng đặc thù</span>
+            <select id="sp">
+              <option value="1">Quần áo, vải, giày dép, túi xách (VP Ninh Hiệp, Đồng Xuân)</option>
+              <option value="2">Gạo, sơn, bánh ram, boong bia</option>
+            </select>
+          </label>
+          <p class="hint" id="spHint"></p>
+        </div>
+
+        <div id="boxVeh" class="sub" hidden>
+          <div class="row two">
+            <label class="fld"><span class="l">Loại xe</span><select id="xe"></select></label>
+            <label class="fld"><span class="l">Số lượng</span><input id="qty" type="number" min="1" step="1" value="1" inputmode="numeric"></label>
+          </div>
+        </div>
+
+        <label class="fld" id="boxCat" style="margin-top:12px"><span class="l">Tính chất hàng <small>(để tính phụ phí khai giá)</small></span>
+          <select id="cat">
+            <option value="normal">Hàng thông thường</option>
+            <option value="fragile">Hàng dễ vỡ</option>
+            <option value="high">Hàng giá trị cao (điện thoại, đồng hồ, máy ảnh, máy tính…)</option>
+            <option value="plant">Cây cảnh, cây xanh thân cành mềm, cây hoa</option>
+            <option value="doc">Giấy tờ</option>
+          </select>
+        </label>
+      </section>
+
+      <section class="sec">
+        <h2>Tuyến vận chuyển</h2>
+        <div id="boxFT" class="fromto">
+          <label class="fld"><span class="l">Nơi gửi</span><select id="from"></select></label>
+          <button type="button" class="swap" id="swap" aria-label="Đổi chiều gửi – nhận" title="Đổi chiều">⇄</button>
+          <label class="fld"><span class="l">Nơi nhận</span><select id="to"></select></label>
+        </div>
+        <label class="fld" id="boxNhr" hidden><span class="l">Tuyến hàng đặc thù</span><select id="nhr"></select></label>
+      </section>
+
+      <section class="sec" id="secPlan">
+        <h2>Gói dịch vụ</h2>
+        <div class="plans" role="radiogroup" aria-label="Gói dịch vụ">
+          <label class="plan"><input type="radio" name="plan" value="fast" checked><div><b>Nhanh</b><em id="tFast">12h – 24h</em></div></label>
+          <label class="plan"><input type="radio" name="plan" value="save"><div><b>Tiết kiệm</b><em id="tSave">2 – 3 ngày</em></div></label>
+        </div>
+      </section>
+
+      <section class="sec" id="secW">
+        <h2>Khối lượng</h2>
+        <div class="row two">
+          <label class="fld"><span class="l">Trọng lượng thực</span>
+            <span class="unit"><input id="w" type="text" inputmode="decimal" placeholder="VD: 2,5"><i>kg</i></span></label>
+          <label class="chk" style="align-self:end;min-height:44px"><input type="checkbox" id="over"><span>Hàng quá khổ<small>một chiều dài hơn 3m</small></span></label>
+        </div>
+        <details class="adv">
+          <summary>Kích thước, hàng đi theo người, cách làm tròn</summary>
+          <div class="row three" style="margin-top:10px">
+            <label class="fld"><span class="l">Dài</span><span class="unit"><input id="dl" type="text" inputmode="decimal"><i>cm</i></span></label>
+            <label class="fld"><span class="l">Rộng</span><span class="unit"><input id="dw" type="text" inputmode="decimal"><i>cm</i></span></label>
+            <label class="fld"><span class="l">Cao</span><span class="unit"><input id="dh" type="text" inputmode="decimal"><i>cm</i></span></label>
+          </div>
+          <p class="hint">Cân quy đổi = Dài × Rộng × Cao ÷ 6.000. Chỉ dùng khi lớn hơn cân thực quá 10kg. Cạnh nhỏ hơn 8cm tính là 8cm.</p>
+          <div class="row two" id="rowEsc" style="margin-top:10px">
+            <label class="fld"><span class="l">Hàng đi theo người</span>
+              <select id="esc">
+                <option value="0">Không</option>
+                <option value="50">Xe 38 giường (miễn 50kg/vé)</option>
+                <option value="60">Xe 28 giường (miễn 60kg/vé)</option>
+                <option value="80">Xe vip (miễn 80kg/vé)</option>
+              </select></label>
+            <label class="fld"><span class="l">Số vé</span><input id="tix" type="number" min="1" step="1" value="1" inputmode="numeric"></label>
+          </div>
+          <label class="fld" style="margin-top:10px"><span class="l">Cách tính “mỗi kg tiếp theo”</span>
+            <select id="rnd">
+              <option value="up">Làm tròn lên từng kg</option>
+              <option value="half">Dưới 500g bỏ, từ 500g tính 1kg</option>
+            </select></label>
+        </details>
+      </section>
+
+      <section class="sec">
+        <h2>Nhận và giao hàng</h2>
+        <div class="row two">
+          <label class="fld"><span class="l">Nhận hàng</span>
+            <select id="pick"><option value="office">Gửi tại văn phòng</option><option value="home">Nhận tại nhà</option><option value="agent">Nhận qua đại lý</option></select></label>
+          <label class="fld"><span class="l">Giao hàng</span>
+            <select id="del"><option value="office">Khách lấy tại văn phòng</option><option value="home">Giao tại nhà</option><option value="agent">Giao qua đại lý</option></select></label>
+        </div>
+        <details class="adv">
+          <summary>Nhận / giao ngoại tuyến (khách hợp đồng)</summary>
+          <p class="hint">Tính từ văn phòng hoặc đại lý gần nhất, tối đa 100km một chiều, cộng thêm theo mỗi 10km.</p>
+          <div class="row two" style="margin-top:8px">
+            <div>
+              <label class="chk"><input type="checkbox" id="offP"><span>Nhận ngoại tuyến</span></label>
+              <span class="unit" style="display:block;margin-top:8px"><input id="kmP" type="text" inputmode="decimal" placeholder="Khoảng cách" disabled><i>km</i></span>
+            </div>
+            <div>
+              <label class="chk"><input type="checkbox" id="offD"><span>Giao ngoại tuyến</span></label>
+              <span class="unit" style="display:block;margin-top:8px"><input id="kmD" type="text" inputmode="decimal" placeholder="Khoảng cách" disabled><i>km</i></span>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <section class="sec">
+        <h2>Giá trị hàng và dịch vụ cộng thêm</h2>
+        <div class="row two">
+          <label class="fld"><span class="l">Giá trị khai báo</span><span class="unit"><input id="val" class="money" type="text" inputmode="numeric" placeholder="0"><i>đ</i></span></label>
+          <label class="fld"><span class="l">Tiền thu hộ (COD)</span><span class="unit"><input id="cod" class="money" type="text" inputmode="numeric" placeholder="0"><i>đ</i></span></label>
+        </div>
+        <p class="hint" id="valHint"></p>
+        <div style="display:grid;gap:12px;margin-top:14px">
+          <label class="chk" id="boxMart"><input type="checkbox" id="mart"><span>Giao hàng siêu thị (đồng kiểm)</span></label>
+          <label class="chk" id="boxGate" hidden><input type="checkbox" id="gate" checked><span>Phụ thu vé ra vào cửa bến<small>10.000đ/chiếc cho xe đạp điện, xe máy</small></span></label>
+        </div>
+        <label class="fld" style="margin-top:14px"><span class="l">Nếu phải hoàn hàng</span>
+          <select id="ret">
+            <option value="none">Không tính</option>
+            <option value="paid">Đã thanh toán cước chiều đi</option>
+            <option value="unpaid">Chưa thanh toán cước chiều đi</option>
+          </select></label>
+      </section>
+    </form>
+
+    <aside class="side">
+      <div class="receipt" id="rc" aria-live="polite"></div>
+      <div class="btns"><button type="button" class="btn" id="copy">Sao chép báo giá</button><button type="button" class="btn ghost" id="reset">Nhập lại</button></div>
+    </aside>
+  </div>
+
+  <details class="panel rules">
+    <summary>Quy định chung cần nhớ</summary>
+    <ul>
+      <li>Cước tính theo trọng lượng thực. Nếu cân quy đổi vượt cân thực quá 10kg thì tính theo cân quy đổi.</li>
+      <li>Cước nội tỉnh khu vực Hà Nội đã gồm nhận và giao tại nhà.</li>
+      <li>Làm tròn tiền cước: phần lẻ dưới 500đ bỏ, từ 500đ trở lên tính 1.000đ.</li>
+      <li>Phụ phí tính theo trọng lượng thực: dưới 500g bỏ, từ 500g tính 1kg.</li>
+      <li>Hàng đóng gỗ: gửi trước 17h chuyển đi tối cùng ngày, gửi sau 17h chuyển sáng hôm sau.</li>
+      <li>Hàng khách từ chối nhận được lưu kho tại văn phòng 7 ngày.</li>
+      <li>Khách phải khai giá trị hàng, trừ giấy tờ, hàng sỉ quần áo vải giày dép túi xách Ninh Hiệp/Đồng Xuân và nhóm xe máy, xe điện.</li>
+      <li>Đơn nhận tại nhà Hà Nội: báo trước 11h nhận trước 13h cùng ngày; báo trước 18h nhận trước 21h cùng ngày; báo sau 18h nhận sáng hôm sau. Khách hợp đồng được miễn phí nhận hàng.</li>
+      <li>Hàng COD miễn phụ phí khai giá và miễn phí giao hàng. Nếu giá trị hàng lớn hơn tiền thu hộ thì tính phụ phí khai giá phần chênh lệch.</li>
+      <li>Hàng hoàn: đã thanh toán thì thu 50% cước cơ bản; chưa thanh toán thì thu cước gửi đi cộng 50% cước cơ bản.</li>
+    </ul>
+  </details>
+</div>
+
+<div class="bar" id="bar"><div><div style="font-size:12px;color:var(--muted)">Tổng cước</div><b id="barTotal">0đ</b></div><a href="#rc">Xem chi tiết</a></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const REG={HN:'Hà Nội',TH:'Thanh Hóa',NA:'Nghệ An',HT:'Hà Tĩnh',QT:'Quảng Trị',DN:'Đà Nẵng'};
+const money=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'.')+'đ';
+const kgTxt=n=>String(+n.toFixed(2)).replace('.',',');
+const rm=x=>{x=Math.round(x);const r=x%1000;return x-r+(r>=500?1000:0)};
+const rs=w=>{const f=Math.floor(w+1e-9);return f+((w-f)>=0.5-1e-9?1:0)};
+const roundKg=(x,mode)=>mode==='half'?rs(x):Math.ceil(x-1e-9);
+const dec=v=>{const n=parseFloat(String(v||'').replace(',','.'));return isFinite(n)&&n>0?n:0};
+const int=v=>parseInt(String(v||'').replace(/\D/g,''))||0;
+
+/* ====== DỮ LIỆU CƯỚC ====== */
+const S1=(a,b,e,t)=>({tiers:[[1,a],[2,b]],extra:e,time:t});
+const S3=(a,b,c,e,t)=>({tiers:[[.5,a],[1,b],[2,c]],extra:e,time:t});
+const TAR={
+  HN_HN:{fast:{tiers:[[2,33000]],extra:3200,time:'12h – 24h'}},
+  INP:{fast:S1(28000,33000,1700,'12h – 24h')},
+  CV:{fast:S1(33000,38000,2200,'12h – 24h'),save:S1(25000,29000,1700,'2 – 3 ngày')},
+  LV:{fast:S1(38000,40000,2700,'12h – 24h'),save:S1(25000,29000,1800,'2 – 3 ngày')},
+  DN_DN:{fast:S3(28000,28000,33000,1700,'12h – 24h')},
+  QT_QT:{fast:S3(28000,28000,33000,1700,'12h – 24h')},
+  HN_DN:{fast:S3(48000,58000,63000,6200,'36h – 40h'),save:S3(43000,48000,53000,4700,'3 – 4 ngày')},
+  X_DN:{fast:S3(43000,48000,53000,5200,'36h – 40h'),save:S3(28000,33000,38000,4200,'3 – 4 ngày')},
+  HN_QT:{fast:S3(43000,43000,48000,4700,'18h – 30h'),save:S3(33000,38000,43000,3700,'2 – 3 ngày')},
+  TH_QT:{fast:S3(33000,38000,40000,2700,'18h – 30h'),save:S3(25000,29000,33000,2200,'2 – 3 ngày')},
+  X_QT:{fast:S3(28000,33000,38000,2200,'12h – 24h'),save:S3(23000,25000,29000,1700,'2 – 3 ngày')},
+  QT_DN:{fast:S1(38000,40000,2700,'12h – 24h'),save:S1(25000,29000,1800,'2 – 3 ngày')}
+};
+function isPair(a,b,x,y){return (a===x&&b===y)||(a===y&&b===x)}
+function getRoute(a,b){
+  if(a===b){return a==='HN'?'HN_HN':a==='DN'?'DN_DN':a==='QT'?'QT_QT':'INP'}
+  if(isPair(a,b,'NA','HT'))return 'INP';
+  if(isPair(a,b,'TH','HN')||isPair(a,b,'NA','TH')||isPair(a,b,'HT','TH'))return 'CV';
+  if(isPair(a,b,'NA','HN')||isPair(a,b,'HT','HN'))return 'LV';
+  if(isPair(a,b,'HN','DN'))return 'HN_DN';
+  if(['TH','NA','HT'].some(x=>isPair(a,b,x,'DN')))return 'X_DN';
+  if(isPair(a,b,'HN','QT'))return 'HN_QT';
+  if(isPair(a,b,'TH','QT'))return 'TH_QT';
+  if(isPair(a,b,'NA','QT')||isPair(a,b,'HT','QT'))return 'X_QT';
+  if(isPair(a,b,'QT','DN'))return 'QT_DN';
+  return null;
+}
+function baseFee(t,w,mode){
+  for(const [mx,p] of t.tiers){if(w<=mx+1e-9)return {fee:p,k:0,mx,p}}
+  const last=t.tiers[t.tiers.length-1];
+  const k=roundKg(w-last[0],mode);
+  return {fee:last[1]+k*t.extra,k,mx:last[0],p:last[1]};
+}
+/* Xe máy, xe đạp: 8 cột tuyến */
+const XE=[
+  {n:'Xe máy đến 110cc',g:'xm',p:[260000,318000,318000,400000,550000,500000,340000,430000]},
+  {n:'Xe máy trên 110cc',g:'xm',p:[318000,375000,375000,500000,650000,600000,440000,490000]},
+  {n:'Xe máy trên 125cc',g:'xm',p:[375000,433000,433000,575000,750000,600000,550000,580000]},
+  {n:'Xe máy trên 150cc',g:'xm',p:[430000,480000,480000,600000,900000,750000,570000,680000]},
+  {n:'Xe máy trên 175cc',g:'xm',p:[480000,530000,530000,600000,1050000,800000,590000,730000]},
+  {n:'Xe máy trên 250cc đến 500cc',g:'xm',p:[530000,580000,580000,650000,1200000,850000,620000,880000]},
+  {n:'Xe đạp nhỏ trẻ em tập đi',g:'bike',p:[46000,58000,58000,58000,100000,80000,65000,80000]},
+  {n:'Xe đạp trẻ em',g:'bike',p:[80000,80000,80000,115000,150000,120000,100000,120000]},
+  {n:'Xe đạp người lớn',g:'bike',p:[115000,115000,115000,173000,250000,200000,150000,200000]},
+  {n:'Xe đạp điện',g:'gate',p:[173000,173000,173000,250000,400000,350000,210000,250000]},
+  {n:'Xe máy điện',g:'gate',p:[207000,230000,230000,330000,500000,400000,260000,350000]}
+];
+function xeCol(a,b){
+  if(isPair(a,b,'NA','HT')||(a===b&&(a==='NA'||a==='HT')))return 0;
+  if(isPair(a,b,'TH','HN')||isPair(a,b,'NA','TH')||isPair(a,b,'HT','TH'))return 1;
+  if(isPair(a,b,'NA','QT')||isPair(a,b,'HT','QT'))return 2;
+  if(isPair(a,b,'NA','HN')||isPair(a,b,'HT','HN')||isPair(a,b,'DN','QT'))return 3;
+  if(isPair(a,b,'DN','HN'))return 4;
+  if(['TH','NA','HT'].some(x=>isPair(a,b,x,'DN')))return 5;
+  if(isPair(a,b,'TH','QT'))return 6;
+  if(isPair(a,b,'HN','QT'))return 7;
+  return -1;
+}
+/* Hàng đặc thù nhóm 1: quần áo, vải, giày dép, túi xách */
+const NH=[[5,35000,45000],[10,45000,60000],[20,56000,75000],[30,68000,92000],[40,79000,108000],[50,91000,125000],[60,101000,140000],[70,113000,156000],[80,124000,172000],[90,136000,190000],[100,146000,204000]];
+const NH_ROUTES=[
+  {l:'Ninh Hiệp / Đồng Xuân → Thanh Hóa',col:1,pick:'NH',del:'TH',disc:0,time:'12h – 24h'},
+  {l:'Thanh Hóa → Ninh Hiệp / Đồng Xuân',col:1,pick:'TH',del:'HN',disc:0,time:'12h – 24h'},
+  {l:'Ninh Hiệp / Đồng Xuân → Nghệ An, Hà Tĩnh',col:2,pick:'NH',del:'NA',disc:0,time:'12h – 24h'},
+  {l:'Nghệ An, Hà Tĩnh → Ninh Hiệp / Đồng Xuân',col:2,pick:'NA',del:'HN',disc:0,time:'12h – 24h'},
+  {l:'Ninh Hiệp / Đồng Xuân → Chợ Vinh (giảm 15%)',col:2,pick:'NH',del:'NA',disc:.15,time:'12h – 24h'},
+  {l:'Chợ Vinh → Ninh Hiệp / Đồng Xuân (giảm 50%)',col:2,pick:'NA',del:'HN',disc:.5,time:'24h – 32h'}
+];
+/* Hàng đặc thù nhóm 2: gạo, sơn, bánh ram, boong bia – giá mỗi kg sau 2kg đầu */
+function gaoRate(a,b){
+  const m3=['TH','NA','HT'];
+  if(a===b)return null;
+  if(isPair(a,b,'HN','QT'))return 2200;
+  if(isPair(a,b,'HN','DN'))return 3200;
+  if(m3.some(x=>isPair(a,b,'HN',x)))return 1200;
+  if(m3.some(x=>isPair(a,b,'QT',x))||isPair(a,b,'QT','DN'))return 1200;
+  if(m3.some(x=>isPair(a,b,'DN',x)))return 2200;
+  return null;
+}
+/* Nhận / giao tại nhà */
+function hnPick(w){
+  if(w<=3)return 30000; if(w<=5)return 35000; if(w<=10)return 40000; if(w<=20)return 45000;
+  if(w<=100)return 45000+Math.ceil(w-20)*1000;
+  if(w<=200)return 125000+Math.ceil(w-100)*500;
+  if(w<=1000)return 175000+Math.ceil(w-200)*200;
+  return 0;
+}
+function nhPick(w){return w<=50?25000:w<=100?35000:w<=200?55000:w<=300?65000:75000}
+function homePick(r,w){
+  if(r==='HN')return hnPick(w); if(r==='NH')return nhPick(w);
+  if(r==='DN')return w<=2?15000:20000; return w<=2?10000:15000;
+}
+function homeDel(r,w){
+  if(r==='HN'){return w<=1?25000:w>=200?423000:25000+Math.ceil(w-1)*2000}
+  if(r==='DN')return w<=2?15000:20000; return w<=2?10000:15000;
+}
+const agentFee=w=>w<=2?15000:w<=10?25000:35000;
+const offPrice=r=>(r==='HN'||r==='NH')?120000:100000;
+const regName=r=>r==='NH'?'Ninh Hiệp / Đồng Xuân':REG[r];
+
+/* ====== ĐỌC FORM ====== */
+function read(){
+  return {
+    kind:document.querySelector('input[name=kind]:checked').value,
+    sp:$('sp').value,nhr:+$('nhr').value,xe:+$('xe').value,qty:Math.max(1,parseInt($('qty').value)||1),
+    cat:$('cat').value,from:$('from').value,to:$('to').value,
+    plan:document.querySelector('input[name=plan]:checked').value,
+    w:dec($('w').value),L:dec($('dl').value),W:dec($('dw').value),H:dec($('dh').value),
+    over:$('over').checked,esc:+$('esc').value,tix:Math.max(1,parseInt($('tix').value)||1),rnd:$('rnd').value,
+    pick:$('pick').value,del:$('del').value,offP:$('offP').checked,offD:$('offD').checked,kmP:dec($('kmP').value),kmD:dec($('kmD').value),
+    val:int($('val').value),cod:int($('cod').value),mart:$('mart').checked,gate:$('gate').checked,ret:$('ret').value
+  };
+}
+
+/* ====== TÍNH CƯỚC ====== */
+function compute(s){
+  const lines=[],warn=[],info=[];
+  const add=(label,amount,note)=>lines.push({label,amount:rm(amount),note:note||''});
+  const isVeh=s.kind==='vehicle',isSp1=s.kind==='special'&&s.sp==='1',isSp2=s.kind==='special'&&s.sp==='2';
+  const wReal=s.w;
+  let time='',routeName='',pickReg,delReg,freightAmt=0,detail='',cat=isVeh||s.kind==='special'?'normal':s.cat;
+  if(isSp1||isSp2||isVeh)cat='normal';
+  if(s.kind==='normal')cat=s.cat;
+
+  if(!isVeh&&wReal<=0)return {empty:'Nhập trọng lượng để xem cước.'};
+
+  if(isVeh){
+    const col=xeCol(s.from,s.to);
+    if(col<0)return {err:`Biểu cước xe máy, xe đạp chưa có tuyến ${REG[s.from]} ⇄ ${REG[s.to]}. Hãy chọn tuyến khác.`};
+    const row=XE[s.xe],p=row.p[col];
+    routeName=`${REG[s.from]} → ${REG[s.to]}`;
+    add(row.n,p*s.qty,`${s.qty} × ${money(p)}`);
+    freightAmt=p*s.qty;
+    time=col<4?'2 – 3 ngày':'3 – 4 ngày';
+    pickReg=s.from;delReg=s.to;
+    if(row.g==='gate'&&s.gate)add('Phụ thu vé ra vào cửa bến',10000*s.qty,`${s.qty} × 10.000đ`);
+    warn.push('Không áp dụng tại văn phòng Trần Duy Hưng (Hà Nội), Lý Thường Kiệt (Nghệ An) và Lê Duẩn (Hà Tĩnh).');
+    if(row.g!=='bike'&&isPair(s.from,s.to,'DN','TH')&&row.n.includes('Xe máy'))info.push('Xe máy Đà Nẵng gửi Thanh Hóa: trả tại Vinh hoặc Hà Tĩnh, sau đó chuyển tiếp nội bộ.');
+    const side=(mode,reg,who)=>{
+      if(mode==='home'){
+        if(row.g==='bike'){const f=reg==='HN'?50000:reg==='DN'?20000:15000;add(`${who} tại nhà`,f*s.qty,`${s.qty} × ${money(f)}`)}
+        else warn.push('Biểu cước không có phí nhận/giao tại nhà cho xe máy, xe điện. Hãy hỏi văn phòng.');
+      }
+    };
+    side(s.pick,pickReg,'Nhận');side(s.del,delReg,'Giao');
+  }
+  else if(isSp1){
+    const r=NH_ROUTES[s.nhr];
+    routeName=r.l;time=r.time;pickReg=r.pick;delReg=r.del;
+    let base;
+    if(wReal<=100){const t=NH.find(x=>wReal<=x[0]);base=t[r.col]}
+    else{base=NH[NH.length-1][r.col]+Math.ceil((wReal-100)/10-1e-9)*(r.col===1?15000:19000)}
+    let amt=base;
+    detail=wReal>100?`Mức 100kg + ${Math.ceil((wReal-100)/10-1e-9)} bậc 10kg`:`Bậc ${(NH.find(x=>wReal<=x[0])[0])}kg`;
+    if(r.disc){amt=base*(1-r.disc);detail+=` · giảm ${r.disc*100}% từ ${money(base)}`}
+    add('Cước hàng đặc thù (quần áo, vải, giày dép, túi xách)',amt,detail);
+    freightAmt=rm(amt);
+    info.push('Hàng nhóm này không phải khai giá trị và không tính phụ phí hàng nặng.');
+  }
+  else{
+    const rk=getRoute(s.from,s.to),tar=TAR[rk];
+    routeName=s.from===s.to?`Nội tỉnh ${REG[s.from]}`:`${REG[s.from]} → ${REG[s.to]}`;
+    let plan=s.plan;
+    if(plan==='save'&&!tar.save){plan='fast';warn.push('Tuyến này không có gói Tiết kiệm, đã tính gói Nhanh.')}
+    const t=tar[plan];time=t.time;pickReg=s.from;delReg=s.to;
+    let wc=wReal;
+    if(s.L>0&&s.W>0&&s.H>0){
+      const v=Math.max(s.L,8)*Math.max(s.W,8)*Math.max(s.H,8)/6000;
+      if(v-wReal>10){wc=v;info.push(`Tính theo cân quy đổi ${kgTxt(v)}kg (lớn hơn cân thực ${kgTxt(v-wReal)}kg).`)}
+      else info.push(`Cân quy đổi ${kgTxt(v)}kg chênh không quá 10kg nên tính theo cân thực.`);
+    }
+    if(!isSp2&&s.esc>0){
+      const allow=s.esc*s.tix;wc=Math.max(0,wc-allow);
+      info.push(`Hàng đi theo người được miễn ${allow}kg.`);
+    }
+    const planName=plan==='fast'?'Nhanh':'Tiết kiệm';
+    if(wc<=0){add('Cước vận chuyển',0,'Nằm trong định mức hàng đi theo người');}
+    else if(isSp2){
+      const rate=gaoRate(s.from,s.to);
+      if(rate==null){
+        warn.push('Giá mỗi kg của nhóm gạo, sơn, bánh ram, boong bia chỉ áp dụng cho tuyến liên tỉnh. Đã tính theo cước thông thường.');
+        const b=baseFee(t,wc,s.rnd);add(`Cước vận chuyển · gói ${planName}`,b.fee,b.k?`${money(b.p)} (đến ${kgTxt(b.mx)}kg) + ${b.k}kg × ${money(t.extra)}`:`Mức đến ${kgTxt(b.mx)}kg`);freightAmt=b.fee;
+      }else{
+        const b=baseFee(t,Math.min(wc,2),s.rnd);const k=wc>2?roundKg(wc-2,s.rnd):0;
+        add(`Cước hàng đặc thù · gói ${planName}`,b.fee+k*rate,k?`${money(b.fee)} (2kg đầu) + ${k}kg × ${money(rate)}`:`Mức đến ${kgTxt(b.mx)}kg`);
+        freightAmt=b.fee+k*rate;
+      }
+    }else{
+      const b=baseFee(t,wc,s.rnd);
+      add(`Cước vận chuyển · gói ${planName}`,b.fee,b.k?`${money(b.p)} (đến ${kgTxt(b.mx)}kg) + ${b.k}kg × ${money(t.extra)}`:`Mức đến ${kgTxt(b.mx)}kg`);
+      freightAmt=b.fee;
+    }
+  }
+
+  /* Nhận / giao tại nhà (hàng thường & đặc thù) */
+  if(!isVeh){
+    const hnLocal=(s.kind!=='special')&&s.from==='HN'&&s.to==='HN';
+    if(hnLocal&&(s.pick!=='office'||s.del!=='office'))info.push('Cước nội tỉnh Hà Nội đã gồm nhận và giao tại nhà.');
+    else{
+      if(s.pick==='home'){
+        const f=homePick(pickReg,wReal);
+        add(`Nhận tại nhà · ${regName(pickReg)}`,f,pickReg==='HN'&&wReal>1000?'Trên 1.000kg miễn phí nhận':'');
+      }else if(s.pick==='agent')add('Nhận qua đại lý',agentFee(wReal));
+      if(s.del==='home'){
+        if(s.cod>0)add(`Giao tại nhà · ${regName(delReg)}`,0,'Đơn COD miễn phí giao hàng');
+        else{const f=homeDel(delReg,wReal);add(`Giao tại nhà · ${regName(delReg)}`,f,delReg==='HN'&&wReal>=200?'Từ 200kg tính bằng mức 200kg':'')}
+      }else if(s.del==='agent')add('Giao qua đại lý',agentFee(wReal));
+    }
+    if(s.offP&&s.kmP>0){const n=Math.ceil(Math.min(s.kmP,100)/10);add('Nhận ngoại tuyến',n*offPrice(pickReg),`${n} × 10km × ${money(offPrice(pickReg))}`);if(s.kmP>100)warn.push('Ngoại tuyến tối đa 100km một chiều.')}
+    if(s.offD&&s.kmD>0){const n=Math.ceil(Math.min(s.kmD,100)/10);add('Giao ngoại tuyến',n*offPrice(delReg),`${n} × 10km × ${money(offPrice(delReg))}`);if(s.kmD>100)warn.push('Ngoại tuyến tối đa 100km một chiều.')}
+  }
+
+  /* Phụ phí */
+  let declAmt=0;
+  if(s.val>0){
+    const baseV=s.cod>0?Math.max(0,s.val-s.cod):s.val;
+    if(baseV>0){
+      let f=0,note='';
+      if(cat==='normal'){f=baseV<=10e6?baseV*0.002:baseV*0.003;note=baseV<=10e6?'0,2% giá trị':'0,3% giá trị'}
+      else if(cat==='doc'){f=Math.max(50000,baseV*0.01);note='1% giá trị, tối thiểu 50.000đ'}
+      else{f=baseV*0.005;note='0,5% giá trị'}
+      if(s.cod>0)note+=` · tính phần chênh ${money(baseV)}`;
+      declAmt=rm(f);add('Phụ phí khai giá trị hàng',f,note);
+    }else info.push('Hàng COD miễn phụ phí khai giá vì giá trị hàng không vượt tiền thu hộ.');
+  }
+  if(s.cod>0){
+    if(s.cod<=2e6)add('Phí phát hàng thu COD',15000,'Đến 2 triệu đồng');
+    else add('Phí phát hàng thu COD',s.cod*0.008,`0,8% × ${money(s.cod)}`);
+  }
+  if(!isVeh&&s.over)add('Phụ phí hàng quá khổ',rs(wReal)*2500,`${rs(wReal)}kg × 2.500đ`);
+  if(!isVeh&&!isSp1&&wReal>100)add('Phụ phí hàng nặng',rs(wReal)*1000,`Trên 100kg: ${rs(wReal)}kg × 1.000đ`);
+  if(!isVeh&&s.mart)add('Phụ phí giao hàng siêu thị',wReal<=25?50000:100000,wReal<=25?'Đến 25kg':'Trên 25kg');
+
+  if(!isVeh&&!isSp1&&s.val<=0&&cat!=='doc')info.push('Khách gửi hàng cần khai giá trị hàng (trừ giấy tờ).');
+
+  const total=lines.reduce((a,l)=>a+l.amount,0);
+  const retFee=rm(0.5*(rm(freightAmt)+declAmt));
+  return {lines,total,time,routeName,warn,info,ret:s.ret,retFee,wReal,isVeh,qty:s.qty};
+}
+
+/* ====== HIỂN THỊ ====== */
+let last=null;
+function paint(r,s){
+  const rc=$('rc');
+  if(r.empty){rc.innerHTML=`<div class="empty">${r.empty}</div>`;$('barTotal').textContent='0đ';last=null;return}
+  if(r.err){rc.innerHTML=`<div class="msg warn">${r.err}</div>`;$('barTotal').textContent='0đ';last=null;return}
+  last={r,s};
+  const wTxt=r.isVeh?`${r.qty} chiếc`:`${kgTxt(r.wReal)}kg`;
+  let h=`<div class="rhead"><span>Báo giá</span><span class="stamp">VAT đã gồm</span></div>
+  <div class="route">${r.routeName}</div>
+  <div class="meta">${wTxt} · Toàn trình ${r.time}</div><hr class="dash">`;
+  h+=r.lines.map(l=>`<div class="ln"><div class="t">${l.label}${l.note?`<small>${l.note}</small>`:''}</div><div class="a">${money(l.amount)}</div></div>`).join('');
+  h+=`<hr class="dash"><div class="sumrow"><span>Tổng cước</span><span class="big">${money(r.total)}</span></div>`;
+  if(r.ret==='paid')h+=`<div class="retbox">Nếu hoàn hàng (đã thanh toán): thu <b>${money(r.retFee)}</b> (50% cước cơ bản).</div>`;
+  if(r.ret==='unpaid')h+=`<div class="retbox">Nếu hoàn hàng (chưa thanh toán): cước gửi đi ${money(r.total)} + 50% cước cơ bản ${money(r.retFee)} = <b>${money(r.total+r.retFee)}</b>.</div>`;
+  h+=r.warn.map(x=>`<div class="msg warn">${x}</div>`).join('')+r.info.map(x=>`<div class="msg info">${x}</div>`).join('');
+  rc.innerHTML=h;$('barTotal').textContent=money(r.total);
+}
+function updateUI(s){
+  const veh=s.kind==='vehicle',sp=s.kind==='special',sp1=sp&&s.sp==='1',sp2=sp&&s.sp==='2';
+  $('boxSp').hidden=!sp;$('boxVeh').hidden=!veh;$('boxCat').hidden=s.kind!=='normal';
+  $('boxFT').hidden=sp1;$('boxNhr').hidden=!sp1;
+  $('secPlan').hidden=veh||sp1;$('secW').hidden=veh;
+  $('rowEsc').hidden=s.kind!=='normal';
+  $('boxMart').hidden=veh;
+  const xg=XE[s.xe]&&XE[s.xe].g;$('boxGate').hidden=!(veh&&xg==='gate');
+  $('spHint').textContent=sp1?'Chỉ áp dụng cho VP Ninh Hiệp và VP Đồng Xuân, tuyến Hà Tĩnh, Nghệ An, Thanh Hóa đi Hà Nội và ngược lại.':'Đến 2kg tính theo gói cước thường, mỗi kg tiếp theo tính giá riêng theo tuyến.';
+  $('valHint').textContent=veh||sp1?'Không bắt buộc khai giá trị với nhóm hàng này.':'Hàng COD miễn phụ phí khai giá, trừ phần giá trị vượt tiền thu hộ.';
+  $('kmP').disabled=!s.offP;$('kmD').disabled=!s.offD;
+  [...$('pick').options].forEach(o=>o.disabled=veh&&o.value==='agent');
+  [...$('del').options].forEach(o=>o.disabled=veh&&o.value==='agent');
+  if(veh){if($('pick').value==='agent')$('pick').value='office';if($('del').value==='agent')$('del').value='office'}
+  if(!veh&&!sp1){
+    const rk=getRoute(s.from,s.to),tar=rk&&TAR[rk];
+    if(tar){
+      $('tFast').textContent=tar.fast.time;
+      $('tSave').textContent=tar.save?tar.save.time:'Không áp dụng cho tuyến này';
+      const sv=document.querySelector('input[name=plan][value=save]');sv.disabled=!tar.save;
+      if(!tar.save&&sv.checked)document.querySelector('input[name=plan][value=fast]').checked=true;
+    }
+  }
+}
+function render(){const s=read();updateUI(s);const r=compute(readAfterUI());paint(r,s)}
+function readAfterUI(){return read()}
+
+/* ====== KHỞI TẠO ====== */
+function fillSelects(){
+  const opts=Object.entries(REG).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+  $('from').innerHTML=opts;$('to').innerHTML=opts;$('from').value='NA';$('to').value='HN';
+  $('nhr').innerHTML=NH_ROUTES.map((r,i)=>`<option value="${i}">${r.l}</option>`).join('');
+  $('xe').innerHTML=XE.map((x,i)=>`<option value="${i}">${x.n}</option>`).join('');
+}
+fillSelects();
+const f=$('f');
+f.addEventListener('input',e=>{
+  if(e.target.classList.contains('money')){const d=e.target.value.replace(/\D/g,'');e.target.value=d?Number(d).toLocaleString('vi-VN'):''}
+  render();
+});
+f.addEventListener('change',render);
+$('swap').addEventListener('click',()=>{const a=$('from').value;$('from').value=$('to').value;$('to').value=a;render()});
+$('reset').addEventListener('click',()=>{f.reset();$('from').value='NA';$('to').value='HN';render()});
+$('copy').addEventListener('click',async()=>{
+  if(!last)return;const {r}=last;
+  const t=[`BÁO GIÁ CƯỚC VĂN MINH`,`Tuyến: ${r.routeName}`,`${r.isVeh?r.qty+' chiếc':kgTxt(r.wReal)+'kg'} · Toàn trình ${r.time}`,'',
+    ...r.lines.map(l=>`- ${l.label}: ${money(l.amount)}${l.note?' ('+l.note+')':''}`),'',`TỔNG CƯỚC: ${money(r.total)} (đã gồm VAT)`].join('\n');
+  const b=$('copy');
+  try{await navigator.clipboard.writeText(t);b.textContent='Đã sao chép'}catch(e){
+    const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');b.textContent='Đã sao chép'}catch(_){b.textContent='Không sao chép được'}ta.remove();
+  }
+  setTimeout(()=>b.textContent='Sao chép báo giá',1600);
+});
+render();
+</script>
+</body>
+</html>
